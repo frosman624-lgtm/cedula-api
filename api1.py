@@ -17,6 +17,7 @@ def consultar_cedula(cedula):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         "Referer": "https://www.sistemaspnp.com/cedula/",
+        "Origin": "https://www.sistemaspnp.com",
     }
 
     r = session.get("https://www.sistemaspnp.com/cedula/", headers=headers, timeout=15)
@@ -25,29 +26,26 @@ def consultar_cedula(cedula):
 
     data = {
         "cedula": cedula,
-        "captcha": captcha or "0"
+        "captcha": captcha or "0",
+        "jeje": ""
     }
 
-    r2 = session.post("https://www.sistemaspnp.com/cedula/", data=data, headers=headers, timeout=15)
+    r2 = session.post("https://www.sistemaspnp.com/resultado.php", data=data, headers=headers, timeout=15)
     soup2 = BeautifulSoup(r2.text, "html.parser")
     texto = soup2.get_text(separator="\n")
 
-    if "Datos Personales" not in texto:
+    if "Datos Personales" not in texto and "Cédula" not in texto:
         return None
 
     datos = {}
     campos = {
-        "Cédula:": "cedula",
-        "RIF:": "rif",
+        "Cédula:": "cedula", "RIF:": "rif",
         "Primer Apellido:": "primer_apellido",
         "Segundo Apellido:": "segundo_apellido",
-        "Nombres:": "nombres",
-        "Estado:": "estado",
-        "Municipio:": "municipio",
-        "Parroquia:": "parroquia",
+        "Nombres:": "nombres", "Estado:": "estado",
+        "Municipio:": "municipio", "Parroquia:": "parroquia",
         "Centro Electoral:": "centro_electoral"
     }
-
     lineas = texto.split("\n")
     for i, linea in enumerate(lineas):
         linea = linea.strip()
@@ -65,20 +63,8 @@ def inicio():
 @app.get("/cedula/{numero}")
 def cedula(numero: str):
     if not numero.isdigit():
-        return JSONResponse(status_code=400, content={
-            "success": False,
-            "mensaje": "La cedula debe contener solo numeros"
-        })
-
+        return JSONResponse(status_code=400, content={"success": False, "mensaje": "Solo numeros"})
     datos = consultar_cedula(numero)
-
     if not datos or len(datos) < 3:
-        return JSONResponse(status_code=404, content={
-            "success": False,
-            "mensaje": "No se encontraron datos para esa cedula"
-        })
-
-    return {
-        "success": True,
-        "data": datos
-    }
+        return JSONResponse(status_code=404, content={"success": False, "mensaje": "No se encontraron datos"})
+    return {"success": True, "data": datos}
