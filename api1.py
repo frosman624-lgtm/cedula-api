@@ -6,7 +6,7 @@ app = FastAPI(title="API Cedula Costa Rica")
 
 @app.get("/")
 def inicio():
-    return {"status": "online", "uso": "/cedula/123456789"}
+    return {"status": "online", "uso": "/cedula/109380752"}
 
 @app.get("/cedula/{numero}")
 def cedula(numero: str):
@@ -24,16 +24,21 @@ def cedula(numero: str):
                 "success": True,
                 "data": {
                     "nombre_completo":       res.get("fullname", "N/A"),
-                    "apellidos":             res.get("temp", "N/A"),
+                    "apellidos":             res.get("lastname", "N/A"),
+                    "primer_apellido":       res.get("lastname1", "N/A"),
+                    "segundo_apellido":      res.get("lastname2", "N/A"),
                     "nombres":               res.get("firstname", "N/A"),
+                    "primer_nombre":         res.get("firstname1", "N/A"),
+                    "segundo_nombre":        res.get("firstname2", "N/A"),
                     "genero":                "Femenino" if res.get("type") == "F" else "Masculino",
+                    "cedula":                data.get("cedula", "N/A"),
                     "cedula_raw":            res.get("rawcedula", "N/A"),
-                    "numero_identificacion": res.get("guess_type_num", "N/A"),
                     "tipo_persona":          res.get("guess_type", "N/A"),
+                    "numero_identificacion": res.get("guess_type_num", "N/A"),
+                    "tipo_identificacion":   data.get("tipoIdentificacion", "N/A"),
                     "clase":                 res.get("class", "N/A"),
-                    "fecha_emision":         res.get("database_date", "N/A"),
-                    "codigo_identificador":  res.get("tipoIdentificacion", "N/A"),
                     "admin":                 "Si" if res.get("admin") != "00" else "No",
+                    "fecha_base_datos":      data.get("database_date", "N/A"),
                 }
             }
         else:
@@ -66,15 +71,17 @@ def por_nombre(nombre: str):
                 "data": [
                     {
                         "nombre_completo":       res.get("fullname", "N/A"),
-                        "apellidos":             res.get("temp", "N/A"),
+                        "apellidos":             res.get("lastname", "N/A"),
+                        "primer_apellido":       res.get("lastname1", "N/A"),
+                        "segundo_apellido":      res.get("lastname2", "N/A"),
                         "nombres":               res.get("firstname", "N/A"),
+                        "primer_nombre":         res.get("firstname1", "N/A"),
+                        "segundo_nombre":        res.get("firstname2", "N/A"),
                         "cedula_raw":            res.get("rawcedula", "N/A"),
+                        "tipo_persona":          res.get("guess_type", "N/A"),
                         "numero_identificacion": res.get("guess_type_num", "N/A"),
                         "genero":                "Femenino" if res.get("type") == "F" else "Masculino",
-                        "tipo_persona":          res.get("guess_type", "N/A"),
                         "clase":                 res.get("class", "N/A"),
-                        "fecha_emision":         res.get("database_date", "N/A"),
-                        "codigo_identificador":  res.get("tipoIdentificacion", "N/A"),
                         "admin":                 "Si" if res.get("admin") != "00" else "No",
                     }
                     for res in results
